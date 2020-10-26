@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jQuery Crash Course | AJax</title>
+    <style>
+      body {
+        font-size: 17px;
+        font-family: arial;
+        background: #f4f4f4;
+        line-height: 1.5em;
+      }
+      header {
+        background: #333;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 4px black solid;
+        margin-bottom: 10px;
+      }
+      .box {
+        background-color: burlywood;
+        width: 100px;
+        height: 100px;
+      }
+      #container {
+        width: 90%;
+        margin: auto;
+        padding: 10px;
+      }
+      .testClass {
+        color: thistle;
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>jQuery Crash Course</h1>
+      <p>Need live-server installed and running</p>
+    </header>
+    <div id="container">
+      <button id="trigger">Trigger</button>
+      <div id="result1"></div>
+      <div id="log"></div>
+      <h3>Add Post</h3>
+      <form id="postForm" action="https://jsonplaceholder.typicode.com/posts">
+        <input type="text" id="title" placeholder="Title" />
+        <br />
+        <textarea placeholder="Body" id="body"></textarea>
+        <br />
+        <input type="submit" value="Submit" />
+      </form>
+      <div id="result"></div>
+    </div>
+
+    <script>
+      $("#trigger").click(function () {
+        $("#result1").load("test.html");
+      });
+      $(document).ajaxComplete(function (event, xhr, settings) {
+        console.log(settings.url);
+        if (settings.url === "test.html") {
+          $("#log").text(
+            "Triggered ajaxComplete handler. The result is " + xhr.responseText
+          );
+        }
+      });
+        $.ajax({
+          method: "GET",
+          url: "https://jsonplaceholder.typicode.com/posts",
+          dataType: "json",
+        }).done(function (data) {
+          console.log(data);
+          $.map(data, function (post, i) {
+            $("#result").append(`<h3> ${post.title} </h3> <p>${post.body}</p>`);
+          });
+        });
+
+      $("#postForm").submit(function (e) {
+        e.preventDefault();
+
+        const title = $("#title").val();
+        const body = $("#body").val();
+        const url = $(this).attr("action");
+
+        $.post(url, { title, body }).done(function (data) {
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>
